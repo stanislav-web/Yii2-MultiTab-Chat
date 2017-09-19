@@ -1,6 +1,7 @@
 version: '2'
 services:
     web:
+        container_name: nginx
         image: nginx:latest
         ports:
             - "8000:80"
@@ -15,29 +16,27 @@ services:
             - php
             - mysqldb
     php:
+        container_name: php
         image: nanoninja/php-fpm
         restart: always
         volumes:
             - "./configs/php-fpm/php.ini:/usr/local/etc/php/conf.d/php.ini"
             - "./app:/var/www/app"
     composer:
+        container_name: composer
         image: "composer"
         volumes:
             - "./app:/app"
         command: install
     mysqldb:
-        image: mysql
-        container_name: ${MYSQL_HOST}
-        restart: always
-        env_file:
-            - ".env"
+        container_name: mysql
+        image: mysql:5.7
         environment:
-            - MYSQL_DATABASE=${MYSQL_DATABASE}
-            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-            - MYSQL_USER=${MYSQL_ROOT_USER}
-            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_DATABASE=chat
+            - MYSQL_USER=root
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
         ports:
             - "8989:3306"
         volumes:
             - "./data/db:/var/lib/mysql"
-            - ./data/init/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+            - "./data/init/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro"
