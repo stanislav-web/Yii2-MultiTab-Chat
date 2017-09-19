@@ -3,7 +3,6 @@
 namespace app\controllers;
 
 use Yii;
-use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -56,7 +55,9 @@ class ChatController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $title = 'Simple Chat';
+        $subtitle = 'Recent chat messages';
+        return $this->render('index', compact('title','subtitle'));
     }
 
     /**
@@ -68,7 +69,7 @@ class ChatController extends Controller
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
-            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            \Yii::$app->response->format = Response::FORMAT_JSON;
             return [
                 'search' => $data,
                 'code' => 200,
@@ -85,7 +86,7 @@ class ChatController extends Controller
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            \Yii::$app->response->format = Response::FORMAT_JSON;
             return [
                 'search' => $data,
                 'code' => 200,
