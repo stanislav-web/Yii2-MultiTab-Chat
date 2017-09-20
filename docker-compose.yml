@@ -39,4 +39,4 @@ services:
             - "8989:3306"
         volumes:
             - "./data/db:/var/lib/mysql"
-            - "./data/init/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro"
+            - "./data/init/schema.sql:/docker-entrypoint-initdb.d/schema.sql"

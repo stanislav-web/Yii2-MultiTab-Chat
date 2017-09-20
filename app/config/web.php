@@ -1,6 +1,4 @@
 <?php
-
-$params = require(__DIR__ . '/params.php');
 $db = require(__DIR__ . '/db.php');
 
 $config = [
@@ -12,6 +10,14 @@ $config = [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'vJv9NZouuAHAm-LdRWEzSSNxYmQj8ya-',
+        ],
+        'geoip2' => [
+            'class' => 'overals\GeoIP2\GeoIP2',
+            'mmdb' => '@app/components/GeoIP2/GeoLite2-City.mmdb',
+            'lng' => 'ru'
+        ],
+        'chatroom' => [
+            'class' => 'app\components\ChatRoom\ChatRoom',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -48,8 +54,7 @@ $config = [
                 'add' => 'chat/add',
             ),
         ],
-    ],
-    'params' => $params,
+    ]
 ];
 
 
