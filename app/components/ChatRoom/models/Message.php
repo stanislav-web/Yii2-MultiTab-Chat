@@ -16,26 +16,6 @@ class Message extends ActiveRecord
     const MESSAGE_MAX_LENGTH = 500;
 
     /**
-     * @var int $id
-     */
-    public $id;
-
-    /**
-     * @var string $userId
-     */
-    public $userId;
-
-    /**
-     * @var string $message
-     */
-    public $message;
-
-    /**
-     * @var int $publication
-     */
-    public $publication;
-
-    /**
      * Get table name
      *
      * @return string

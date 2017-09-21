@@ -61,8 +61,16 @@ class ChatController extends Controller
 
         $messageModel = Yii::$app->chatroom->getMessageModel();
         $userModel = Yii::$app->chatroom->getUserModel();
+        $isAuth = Yii::$app->chatroom->isUserAuth();
+        $ip = Yii::$app->chatroom->getAuthIp();
         return $this->render('index',
-            compact('title', 'subtitle', 'messageModel', 'userModel')
+            compact('title',
+                'subtitle',
+                'messageModel',
+                'userModel',
+                'isAuth',
+                'ip'
+            )
         );
     }
 
@@ -73,11 +81,13 @@ class ChatController extends Controller
      */
     public function actionList()
     {
-        if (false === Yii::$app->request->isAjax) {
+        $request = Yii::$app->getRequest();
+
+        if (false === $request->isAjax) {
             throw new ForbiddenHttpException(' Access forbidden');
         }
 
-        $messages = Yii::$app->chatroom->loadMessages();
+        $messages = Yii::$app->chatroom->loadMessages($request->get('lastId'));
         return $this->asJson($messages);
 
     }
@@ -93,25 +103,31 @@ class ChatController extends Controller
         if (false === Yii::$app->request->isAjax) {
             throw new ForbiddenHttpException(' Access forbidden');
         }
-        return array_merge(
-            Yii::$app->chatroom->validateUser(),
-            Yii::$app->chatroom->validateMessage()
-        );
+
+        if (null === Yii::$app->chatroom->validateUser()) {
+            $response = Yii::$app->chatroom->validateMessage();
+        } else {
+            $response = array_merge(
+                Yii::$app->chatroom->validateUser(),
+                Yii::$app->chatroom->validateMessage()
+            );
+        }
+        return $response;
     }
 
     /**
      * Chat message save
      *
-     * @return array
+     * @return Response
      */
     public function actionSave()
     {
-
-        if (false === Yii::$app->request->isAjax) {
+        $request = Yii::$app->getRequest();
+        if (false === $request->isAjax && false === $request->isPost) {
             throw new ForbiddenHttpException(' Access forbidden');
         }
 
-        $result = \Yii::$app->chatroom->saveChat();
-        return $this->asJson($result);
+        $response = Yii::$app->chatroom->saveChat($request);
+        return $this->asJson(['response' => $response]);
     }
 }

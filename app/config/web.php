@@ -11,6 +11,16 @@ $config = [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'vJv9NZouuAHAm-LdRWEzSSNxYmQj8ya-',
         ],
+        'response' => [
+            // ...
+            'formatters' => [
+                \yii\web\Response::FORMAT_JSON => [
+                    'class' => 'yii\web\JsonResponseFormatter',
+                    'prettyPrint' => YII_DEBUG, // use "pretty" output in debug mode
+                    'encodeOptions' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+                ],
+            ],
+        ],
         'geoip2' => [
             'class' => 'overals\GeoIP2\GeoIP2',
             'mmdb' => '@app/components/GeoIP2/GeoLite2-City.mmdb',
@@ -21,10 +31,6 @@ $config = [
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
-        ],
-        'user' => [
-            'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
         ],
         'errorHandler' => [
             'errorAction' => 'chat/error',
@@ -64,7 +70,7 @@ if (YII_ENV_DEV) {
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        'allowedIPs' => ['172.19.0.1', '::1'],
+        'allowedIPs' => [],
     ];
 
     $config['bootstrap'][] = 'gii';

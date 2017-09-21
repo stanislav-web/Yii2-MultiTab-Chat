@@ -2,9 +2,11 @@
 
 namespace app\components\ChatRoom;
 
+use app\components\ChatRoom\models\Message;
 use app\components\ChatRoom\models\User;
 use yii\base\Object;
-use app\components\ChatRoom\models\Message;
+use yii\db\Query;
+use yii\web\Request;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
@@ -14,7 +16,6 @@ use yii\widgets\ActiveForm;
  */
 class ChatRoom extends Object
 {
-
     /**
      * @var User
      */
@@ -26,18 +27,33 @@ class ChatRoom extends Object
     private $message;
 
     /**
-     * @const MESSAGE_LIMIT
+     * @var string location
      */
-    const MESSAGE_LIMIT = 20;
+    private $location = 'Kharkov';
+
+    /**
+     * Init
+     */
+    public function init()
+    {
+        $session = \Yii::$app->session;
+
+        if (false === $session->isActive) {
+            $session->open();
+        }
+
+        parent::init();
+    }
 
     /**
      * Get model `message`
      *
      * @return Message
      */
-    public function getMessageModel() {
+    public function getMessageModel()
+    {
 
-        if(null === $this->message) {
+        if (null === $this->message) {
             $this->message = new Message();
         }
 
@@ -49,9 +65,10 @@ class ChatRoom extends Object
      *
      * @return User
      */
-    public function getUserModel() {
+    public function getUserModel()
+    {
 
-        if(null === $this->user) {
+        if (null === $this->user) {
             $this->user = new User();
         }
 
@@ -59,18 +76,74 @@ class ChatRoom extends Object
     }
 
     /**
+     * @return bool
+     */
+    public function isUserAuth()
+    {
+        $isAuth = false;
+
+        $session = \Yii::$app->session;
+        $isUserHasIp = $session->has('ip');
+        $userModel = $this->getUserModel();
+        $ip = ip2long(\Yii::$app->request->userIP);
+        $isUserExist = $userModel::findOne($ip);
+
+        if (false === is_null($isUserExist) || $isUserHasIp) {
+            $isAuth = true;
+        }
+
+        return $isAuth;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthIp()
+    {
+        if (true === $this->isUserAuth()) {
+            $session = \Yii::$app->session;
+            $ip = $session->get('ip');
+        }
+
+        return (isset($ip)) ? $ip : null;
+    }
+
+
+    /**
+     * Validate `message`
+     * @return array
+     */
+    public function validateMessage()
+    {
+
+        $messageModel = $this->getMessageModel();
+        $response = [];
+
+        $request = \Yii::$app->getRequest();
+        if ($request->isPost && $messageModel->load($request->post())) {
+            \Yii::$app->response->format = Response::FORMAT_JSON;
+            $response = ActiveForm::validate($messageModel);
+        }
+
+        return $response;
+    }
+
+    /**
      * Validate `user`
      * @return array
      */
-    public function validateUser() {
-
-        $userModel = $this->getUserModel();
+    public function validateUser()
+    {
 
         $request = \Yii::$app->getRequest();
-        if ($request->isPost && $userModel->load($request->post())) {
+        $response = [];
+
+        if ($request->isPost && $this->getUserModel()->load($request->post())) {
             \Yii::$app->response->format = Response::FORMAT_JSON;
-            return ActiveForm::validate($userModel);
+            $response = ActiveForm::validate($this->getUserModel());
         }
+
+        return $response;
     }
 
     /**
@@ -78,54 +151,79 @@ class ChatRoom extends Object
      *
      * @return bool
      */
-    public function saveChat() {
+    public function saveChat(Request $request)
+    {
 
         $transaction = \Yii::$app->db->beginTransaction();
 
-        try  {
-            if ( $this->getUserModel()->save() && $this->getMessageModel()->save()) {
-                $transaction->commit();
-            } else {
-                $transaction->rollBack();
+        try {
+
+            $userModel = $this->getUserModel();
+            $userModel->ip = ip2long($request->getUserIP());
+            $isExist = $userModel::findOne($userModel->ip);
+            if (!$isExist) {
+                $userModel->username = $request->post('User')['username'];
+                $userModel->save(false);
             }
 
-            return true;
+            $messageModel = $this->getMessageModel();
+            $messageModel->userIp = $userModel->ip;
+            $messageModel->message = $request->post('Message')['message'];
+            $messageModel->save(false);
+
+            $session = \Yii::$app->session;
+            $session->set('ip', $userModel->ip);
+
+            $transaction->commit();
+            return $messageModel->id;
 
         } catch (\Exception $e) {
             $transaction->rollBack();
-        }
-    }
-
-    /**
-     * Validate `message`
-     * @return array
-     */
-    public function validateMessage() {
-
-        $messageModel = $this->getMessageModel();
-
-        $request = \Yii::$app->getRequest();
-        if ($request->isPost && $messageModel->load($request->post())) {
-            \Yii::$app->response->format = Response::FORMAT_JSON;
-            return ActiveForm::validate($messageModel);
+            return 'Error!';
         }
     }
 
     /**
      * Load messages
      *
-     * @param int $limit
+     * @param int $lastId
      *
-     * @return array|\yii\db\ActiveRecord[]
+     * @return array
      */
-    public function loadMessages($limit = self::MESSAGE_LIMIT) {
+    public function loadMessages($lastId)
+    {
+        $query = new Query();
+        $query->select([
+            'messages.id',
+            'INET_NTOA(users.ip) as ip',
+            'users.username',
+            'messages.message',
+            'messages.publication'
+        ])
+            ->from('messages')
+            ->leftJoin('users', 'messages.userIp = users.ip');
 
-        $messages = Message::find()
-            ->leftJoin('user', 'user.id = message.userId')
-            ->orderBy(['publication' => SORT_ASC])
-            ->limit($limit)
-            ->all();
+        if (0 < (int)$lastId) {
+            $query->where(['>', 'messages.id', (int)$lastId]);
+        }
+        $query->orderBy(['publication' => SORT_ASC]);
 
-        return $messages;
+        $response = $query->createCommand()->queryAll();
+
+        return $this->mapLoadResponse($response);
+    }
+
+    private function mapLoadResponse(array $response)
+    {
+
+        $geoIp = \Yii::$app->geoip2;
+
+        foreach ($response as &$entity) {
+            if (false === isset($geoIp->getInfoByIP($entity['ip'])->city)) {
+                $entity['location'] = $this->location;
+            }
+        }
+
+        return $response;
     }
 }

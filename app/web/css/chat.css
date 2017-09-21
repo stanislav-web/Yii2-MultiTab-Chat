@@ -1,0 +1,15 @@
+.media-list {
+    height:224px;
+    overflow:auto;
+}
+
+.user {
+    color: #0000aa;
+}
+.auth {
+    color: #00aa00;
+}
+
+.pull-right {
+   margin-right: 10px;
+}

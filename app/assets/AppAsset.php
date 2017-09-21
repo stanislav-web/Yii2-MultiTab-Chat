@@ -17,9 +17,12 @@ class AppAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
-    public $css = [];
+    public $css = [
+        'css/chat.css'
+    ];
     public $js = [
-        'js/chat.js'
+        'js/form.js',
+        'js/messages.js',
     ];
     public $depends = [
         'yii\bootstrap\BootstrapAsset',
