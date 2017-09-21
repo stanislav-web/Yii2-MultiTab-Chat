@@ -56,17 +56,14 @@ class ChatController extends Controller
      */
     public function actionIndex()
     {
-        $subtitle = 'Recent chat messages';
+        $this->view->title = 'Simple Chat Yii2';
+
         $messageModel = Yii::$app->chatroom->getMessageModel();
         $userModel = Yii::$app->chatroom->getUserModel();
-        $isAuth = Yii::$app->chatroom->isUserAuth();
-        $ip = Yii::$app->chatroom->getAuthIp();
         return $this->render('index',
-            compact('subtitle',
+            compact(
                 'messageModel',
-                'userModel',
-                'isAuth',
-                'ip'
+                    'userModel'
             )
         );
     }
@@ -125,6 +122,6 @@ class ChatController extends Controller
         }
 
         $response = Yii::$app->chatroom->saveChat($request);
-        return $this->asJson(['response' => $response]);
+        return $this->asJson($response);
     }
 }

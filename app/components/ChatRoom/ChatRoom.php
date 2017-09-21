@@ -32,20 +32,6 @@ class ChatRoom extends Object
     private $location = 'Kharkov';
 
     /**
-     * Init
-     */
-    public function init()
-    {
-        $session = \Yii::$app->session;
-
-        if (false === $session->isActive) {
-            $session->open();
-        }
-
-        parent::init();
-    }
-
-    /**
      * Get model `message`
      *
      * @return Message
@@ -74,37 +60,6 @@ class ChatRoom extends Object
 
         return $this->user;
     }
-
-    /**
-     * @return bool
-     */
-    public function isUserAuth()
-    {
-        $isAuth = false;
-
-        $session = \Yii::$app->session;
-        $isUserHasIp = $session->has('ip');
-        $ip = ip2long(\Yii::$app->request->userIP);
-
-        $isUserExist = $this->isUserExist($ip);
-        if ($isUserExist || $isUserHasIp) {
-            $isAuth = true;
-        }
-
-        return $isAuth;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAuthIp()
-    {
-        $session = \Yii::$app->session;
-        $ip = $session->get('ip', null);
-
-        return (true === isset($ip)) ? $ip : null;
-    }
-
 
     /**
      * Validate `message`
@@ -148,37 +103,42 @@ class ChatRoom extends Object
      *
      * @param Request $request
      *
-     * @return bool
+     * @return User
      */
     public function saveChat(Request $request)
     {
 
         $transaction = \Yii::$app->db->beginTransaction();
+        $userModel = $this->getUserModel();
 
         try {
 
-            $userModel = $this->getUserModel();
-            $userModel->ip = ip2long($request->getUserIP());
-            $isExist = $userModel::findOne($userModel->ip);
-            if (!$isExist) {
-                $userModel->username = $request->post('User')['username'];
+            $username = $request->post('User')['username'];
+
+            $user = $userModel::findOne([
+                'username' => $request->post('User')['username'],
+            ]);
+
+            if (!$user) {
+                $userModel->ip = ip2long($request->getUserIP());
+                $userModel->username = $username;
                 $userModel->save(false);
+                $userId = $userModel->getPrimaryKey();
+            } else {
+                $userId = $user->id;
             }
 
             $messageModel = $this->getMessageModel();
-            $messageModel->userIp = $userModel->ip;
+            $messageModel->userId = $userId;
             $messageModel->message = $request->post('Message')['message'];
             $messageModel->save(false);
 
-            $session = \Yii::$app->session;
-            $session->set('ip', $userModel->ip);
-
             $transaction->commit();
-            return $messageModel->id;
+            return $userModel;
 
         } catch (\Exception $e) {
             $transaction->rollBack();
-            return 'Error!';
+            return $userModel;
         }
     }
 
@@ -200,7 +160,7 @@ class ChatRoom extends Object
             'messages.publication'
         ])
             ->from('messages')
-            ->leftJoin('users', 'messages.userIp = users.ip');
+            ->leftJoin('users', 'messages.userId = users.id');
 
         if (0 < (int)$lastId) {
             $query->where(['>', 'messages.id', (int)$lastId]);

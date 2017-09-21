@@ -11,11 +11,10 @@ use yii\widgets\ActiveForm;
     <br/>
     <div class="col-md-8 main-chat">
         <div class="panel panel-info">
-            <div class="panel-heading">
-                <?= Html::encode($subtitle) ?>
+            <div class="ttop">
+                <span class="ttitle">Live Chat</span>
             </div>
             <div class="panel-body">
-                <img class="media-object main-baner" src="<?=BaseUrl::base(true);?>/images/logo.png" />
                 <ul class="media-list" id="media-list">
                 </ul>
             </div>
@@ -31,11 +30,9 @@ use yii\widgets\ActiveForm;
                     'template' => '{input}{error}',
                 ]
             ]); ?>
-            <?php if (false === $isAuth): ?>
-                <div class="form-group">
-                    <?= $form->field($userModel, 'username')->textInput(['placeholder' => 'Type your nickname']); ?>
-                </div>
-            <?php endif; ?>
+            <div class="form-group">
+                <?= $form->field($userModel, 'username')->textInput(['placeholder' => 'Type your nickname']); ?>
+            </div>
             <div class="input-group">
                 <?= $form->field($messageModel, 'message')
                     ->textarea([
@@ -58,16 +55,23 @@ use yii\widgets\ActiveForm;
     </div>
 </div>
 <script>
+
     var tid = setInterval( function () {
         if ( document.readyState !== 'complete' ) return;
         clearInterval( tid );
-        Message.currentIp = '<?=$ip;?>';
+
+        var username = Storage.get('username');
+        if(username) {
+            var input = document.getElementById('user-username');
+                input.type = 'hidden';
+                input.value = username;
+        }
 
         return (function() {
             var interval = 0;
             (function worker() {
                 Message.load('<?=Url::to(['chat/list']);?>');
-                interval = 3000;
+                interval = 2000;
                 Message.disableTime = interval;
                 setTimeout(worker, Message.disableTime);
             })();

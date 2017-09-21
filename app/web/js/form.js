@@ -9,10 +9,19 @@ jQuery(document).on("beforeSubmit", "form", function () {
         type: 'post',
         data: form.serialize(),
         success: function (response) {
+
             var form = jQuery('form');
-            form.find('#user-username').parent().remove();
+            var btn = form.find('button');
+
             form.find('#message-message').val('');
-            var btn = form.find('button')
+            if(response.hasOwnProperty('username')) {
+                if(response.username !== null) {
+                    Storage.set('username', response.username);
+                    var input = document.getElementById('user-username');
+                        input.type = 'hidden';
+                        input.value = response.username;
+                }
+            }
             btn.attr('disabled', 'disabled');
             setTimeout(function () {
                 btn.removeAttr('disabled');

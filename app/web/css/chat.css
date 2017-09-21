@@ -1,27 +1,123 @@
-.media-list {
-   max-height:210px;
-    overflow-y: scroll;
-    border: 1px solid #cecece;
-    padding: 0 10px;
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    background: url('../images/chatbg.jpg') 100% 100% no-repeat;
+    background-size: cover;
 }
+
+.ttop {
+    background: #5682A3;
+    height: 52px;
+    width: 100%;
+    color: #fff;
+    text-align: center;
+    line-height: 50px;
+}
+
+.tlogo {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+}
+.panel-info {
+    border: 1px solid #89a7bd;
+}
+ul.media-list {
+    background: url('../images/chatbg.jpg') 100% 100% no-repeat;
+    background-size: cover;
+}
+
+ul.media-list {
+    max-height: 230px;
+    overflow-y: scroll;
+}
+
+ul.media-list li {
+    margin-top: 0;
+    padding: 5px;
+}
+
+.pull-right.auth , .pull-left.user {
+    padding-top: 15px;
+}
+.text-muted {
+    font-size: x-small;
+    font-style: italic;
+}
+.bubble{
+    background-color: #F2F2F2;
+    border-radius: 5px;
+    box-shadow: 0 0 6px #B2B2B2;
+    display: inline-block;
+    padding: 10px 18px;
+    position: relative;
+    vertical-align: top;
+}
+
+.bubble::before {
+    background-color: #F2F2F2;
+    content: "\00a0";
+    display: block;
+    height: 16px;
+    position: absolute;
+    top: 11px;
+    transform:             rotate( 29deg ) skew( -35deg );
+    -moz-transform:    rotate( 29deg ) skew( -35deg );
+    -ms-transform:     rotate( 29deg ) skew( -35deg );
+    -o-transform:      rotate( 29deg ) skew( -35deg );
+    -webkit-transform: rotate( 29deg ) skew( -35deg );
+    width:  20px;
+}
+
+.me {
+    float: left;
+    margin: 5px 45px 5px 20px;
+}
+
+.me::before {
+    box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
+    left: -9px;
+}
+
+.you {
+    float: right;
+    margin: 5px 20px 5px 45px;
+}
+
+.you::before {
+    box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );
+    right: -9px;
+}
+
 
 .user {
-    color: #0000aa;
-}
-.auth {
-    color: #00aa00;
+    color: #4267b2;
 }
 
-.main-chat{
+.auth {
+    color: #4267b2;
+    font-weight: bold;
+}
+
+.main-chat {
     max-width: 800px;
     margin: 0 auto;
     float: none;
 }
-.main-baner{
+
+.main-baner {
     margin: 0 auto;
     max-width: 350px;
 }
 
 #w0, .panel-footer {
-    background-color: #d9edf7;
+    border: none;
+}
+
+#w0 .panel-footer button[type=submit] {
+    background-color: #5682A3;
+    border: none;
+}
+
+#w0 input, #w0 textarea {
+    border: 1px solid #89a7bd;
 }

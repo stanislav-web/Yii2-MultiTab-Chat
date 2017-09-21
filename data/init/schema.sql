@@ -3,9 +3,11 @@ DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `messages`;
 
 CREATE TABLE `users` (
+  `id`       INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `ip`       INT UNSIGNED NOT NULL,
   `username` VARCHAR(64)  NOT NULL DEFAULT '',
-  PRIMARY KEY (`ip`)
+  PRIMARY KEY (`id`),
+  KEY `username_idx` (`username`)
 )
   ENGINE = InnoDB
   DEFAULT
@@ -15,13 +17,14 @@ CREATE TABLE `users` (
 
 CREATE TABLE `messages` (
   `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `userIp`      INT UNSIGNED        NOT NULL,
+  `userId`      INT UNSIGNED        NOT NULL,
   `message`     TEXT                NOT NULL,
   `publication` TIMESTAMP           NOT NULL
                                              DEFAULT CURRENT_TIMESTAMP
   ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`userIp`) REFERENCES users (ip)
+  KEY `userId_idx` (`userId`),
+  FOREIGN KEY (`userId`) REFERENCES users (id)
     ON UPDATE RESTRICT
     ON DELETE CASCADE
 )

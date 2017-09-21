@@ -2,8 +2,7 @@
 
 ### Описание
 Простенький чат, для общения нескольких человек (не ограничено).
-После отправки сообщения пользователь привязывается по IP к сессии и базе данных
-Есть ограничение в плане общения с разными никами под IP. - Одни ник - Один IP
+Чтобы проверить работу, нужно естественно установить, и открыть несколько вкладок в браузере для общения
 
 ### Разработка 
 - [CONFIGURE] Docker compositor for Nginx 1.3 + PHP 5.6 + MySQL 5.6 @estimated 1h
@@ -11,6 +10,7 @@
 - [CONFIGURE] Bootstrap 3 template @estimated 30m
 - [ADD] Ajax saving chat actions into DB @estimated 3h
 - [COMPLETE] Ajax response and handling list @estimated 3h
+- [REDESIGN] Small markup changes @1h
 
 ### Требования
 MySQL 5.5
@@ -21,7 +21,11 @@ NGINX
 
 ***1.*** Через Docker
 ```
-docker-compose up
+> docker-compose up
+
+// при необходимости зайти в контейнер mysql и инмпортировать дамп
+> (docker exec -i -t mysql /bin/bash)
+> (mysql -uroot -p chat < /docker-entrypoint-initdb.d/schema.sql)
 ```
 
 ***2.*** Обычным способом 

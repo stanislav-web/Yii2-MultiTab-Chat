@@ -22,6 +22,7 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'js/form.js',
+        'js/storage.js',
         'js/messages.js',
     ];
     public $depends = [
