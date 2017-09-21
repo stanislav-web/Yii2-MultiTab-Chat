@@ -56,16 +56,13 @@ class ChatController extends Controller
      */
     public function actionIndex()
     {
-        $title = 'Simple Chat';
         $subtitle = 'Recent chat messages';
-
         $messageModel = Yii::$app->chatroom->getMessageModel();
         $userModel = Yii::$app->chatroom->getUserModel();
         $isAuth = Yii::$app->chatroom->isUserAuth();
         $ip = Yii::$app->chatroom->getAuthIp();
         return $this->render('index',
-            compact('title',
-                'subtitle',
+            compact('subtitle',
                 'messageModel',
                 'userModel',
                 'isAuth',

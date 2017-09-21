@@ -8,14 +8,14 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 ?>
 <div class="row ">
-    <h3 class="text-center"><?= Html::encode($title) ?> </h3>
-    <br/><br/>
-    <div class="col-md-8">
+    <br/>
+    <div class="col-md-8 main-chat">
         <div class="panel panel-info">
             <div class="panel-heading">
-                <?= $subtitle; ?>
+                <?= Html::encode($subtitle) ?>
             </div>
             <div class="panel-body">
+                <img class="media-object main-baner" src="<?=BaseUrl::base(true);?>/images/logo.png" />
                 <ul class="media-list" id="media-list">
                 </ul>
             </div>

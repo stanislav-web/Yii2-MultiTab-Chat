@@ -1,6 +1,8 @@
 .media-list {
-    height:224px;
-    overflow:auto;
+   max-height:210px;
+    overflow-y: scroll;
+    border: 1px solid #cecece;
+    padding: 0 10px;
 }
 
 .user {
@@ -10,6 +12,16 @@
     color: #00aa00;
 }
 
-.pull-right {
-   margin-right: 10px;
+.main-chat{
+    max-width: 800px;
+    margin: 0 auto;
+    float: none;
+}
+.main-baner{
+    margin: 0 auto;
+    max-width: 350px;
+}
+
+#w0, .panel-footer {
+    background-color: #d9edf7;
 }
