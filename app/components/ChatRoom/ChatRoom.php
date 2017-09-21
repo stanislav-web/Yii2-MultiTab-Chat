@@ -84,11 +84,10 @@ class ChatRoom extends Object
 
         $session = \Yii::$app->session;
         $isUserHasIp = $session->has('ip');
-        $userModel = $this->getUserModel();
         $ip = ip2long(\Yii::$app->request->userIP);
-        $isUserExist = $userModel::findOne($ip);
 
-        if (false === is_null($isUserExist) || $isUserHasIp) {
+        $isUserExist = $this->isUserExist($ip);
+        if ($isUserExist || $isUserHasIp) {
             $isAuth = true;
         }
 
@@ -100,12 +99,10 @@ class ChatRoom extends Object
      */
     public function getAuthIp()
     {
-        if (true === $this->isUserAuth()) {
-            $session = \Yii::$app->session;
-            $ip = $session->get('ip');
-        }
+        $session = \Yii::$app->session;
+        $ip = $session->get('ip', null);
 
-        return (isset($ip)) ? $ip : null;
+        return (true === isset($ip)) ? $ip : null;
     }
 
 
@@ -148,6 +145,8 @@ class ChatRoom extends Object
 
     /**
      * Save models into `users`, and `messages`
+     *
+     * @param Request $request
      *
      * @return bool
      */
@@ -213,6 +212,13 @@ class ChatRoom extends Object
         return $this->mapLoadResponse($response);
     }
 
+    /**
+     * Map response
+     *
+     * @param array $response
+     *
+     * @return array
+     */
     private function mapLoadResponse(array $response)
     {
 
@@ -225,5 +231,19 @@ class ChatRoom extends Object
         }
 
         return $response;
+    }
+
+    /**
+     * Check if user exists
+     *
+     * @param int $ip
+     *
+     * @return bool
+     */
+    private function isUserExist($ip) {
+        $userModel = $this->getUserModel();
+        // findOne() WTF ?? return array|null|ActiveRecord (((
+        // this shit breeds shit
+        return (null === $userModel::findOne($ip)) ? false : true;
     }
 }
