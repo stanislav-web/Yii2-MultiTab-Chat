@@ -37,6 +37,10 @@
 
 (создать базу и загрузить схему /var/www/chat/data/init/schema.sql)
 настройки подключения в > app/config/db.php
+
+Проверить права на запись директорий
+app/runtime/
+app/web/assets/
 ```
 
 ### Запуск
