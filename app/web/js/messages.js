@@ -9,7 +9,7 @@ var Message = (function () {
 
     var window = document.getElementById('media-list');
     var disableTime = 0;
-    var lastId;
+    var lastId = 0;
 
     /**
      * Append message
@@ -73,7 +73,9 @@ var Message = (function () {
      */
     var getListRequest = function (url) {
 
-        jQuery.getJSON(url, {lastId: lastId})
+        var url = url + '/' + lastId;
+
+        jQuery.get(url)
             .done(function (data) {
 
                 var row = data.slice(-1).pop();

@@ -57,6 +57,7 @@ $config = [
             'showScriptName' => false,
             'rules' => array(
                 'list' => 'chat/list',
+                'list/<listId:\d+>' => 'chat/list',
                 'add' => 'chat/add',
             ),
         ],
@@ -77,7 +78,7 @@ if (YII_ENV_DEV) {
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        'allowedIPs' => ['172.19.0.1', '::1'],
+        'allowedIPs' => [],
     ];
 }
 

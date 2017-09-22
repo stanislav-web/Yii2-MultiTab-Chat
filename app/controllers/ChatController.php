@@ -31,7 +31,7 @@ class ChatController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'list' => ['get'],
-                    'add' => ['post'],
+                    'save' => ['post'],
                 ],
             ],
         ];
@@ -71,17 +71,16 @@ class ChatController extends Controller
     /**
      * Ge messages action
      *
+     * @param int $listId
      * @return Response
      */
-    public function actionList()
+    public function actionList($listId)
     {
-        $request = Yii::$app->getRequest();
-
-        if (false === $request->isAjax) {
+        if (false === Yii::$app->request) {
             throw new ForbiddenHttpException(' Access forbidden');
         }
 
-        $messages = Yii::$app->chatroom->loadMessages($request->get('lastId'));
+        $messages = Yii::$app->chatroom->loadMessages($listId);
         return $this->asJson($messages);
 
     }
