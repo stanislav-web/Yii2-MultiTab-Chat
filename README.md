@@ -14,7 +14,7 @@
 
 ### Требования
 - MySQL 5.5
-- PHP5.6 FPM / PHP 5.7FPM
+- PHP5.6 FPM / PHP 7 FPM
 - NGINX
 
 ### Установка
