@@ -13,9 +13,9 @@
 - [REDESIGN] Small markup changes @1h
 
 ### Требования
-MySQL 5.5
-PHP5.6 FPM
-NGINX
+- MySQL 5.5
+- PHP5.6 FPM / PHP 5.7FPM
+- NGINX
 
 ### Установка
 
