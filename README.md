@@ -23,7 +23,7 @@
 ```
 > docker-compose up
 
-// при необходимости зайти в контейнер mysql и инмпортировать дамп
+// при необходимости зайти в контейнер mysql и импортировать дамп
 > (docker exec -i -t mysql /bin/bash)
 > (mysql -uroot -p chat < /docker-entrypoint-initdb.d/schema.sql)
 ```
