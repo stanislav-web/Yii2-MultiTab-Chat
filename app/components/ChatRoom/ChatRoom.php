@@ -192,18 +192,4 @@ class ChatRoom extends Object
 
         return $response;
     }
-
-    /**
-     * Check if user exists
-     *
-     * @param int $ip
-     *
-     * @return bool
-     */
-    private function isUserExist($ip) {
-        $userModel = $this->getUserModel();
-        // findOne() WTF ?? return array|null|ActiveRecord (((
-        // this shit breeds shit
-        return (null === $userModel::findOne($ip)) ? false : true;
-    }
 }

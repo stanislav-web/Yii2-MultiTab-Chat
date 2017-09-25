@@ -1,11 +1,12 @@
-"use strict";
-
+// noinspection JSUnusedGlobalSymbols
 /**
- * Message interface
+ *  Message interface
  *
- * @type {{load}}
+ * @type {{load, disableTime}}
  */
 var Message = (function () {
+
+    "use strict";
 
     var window = document.getElementById('media-list');
     var disableTime = 0;
@@ -33,7 +34,7 @@ var Message = (function () {
         return '<li class="media">\n' +
             '                        <div class="media-body">\n' +
             '                            <div class="media">\n' +
-            '                                <div class="'+authorClassName+' " href="#">' + name + ' ('+location+')</div>\n' +
+            '                                <div class="'+authorClassName+' ">' + name + ' ('+location+')</div>\n' +
             '                                <p class="bubble '+bubbleClassName+'">' + message +'<br>'+
             '                                   <small class="text-muted">' + bottomText + ' </small>\n' +
             '                                </p>' +
@@ -41,19 +42,6 @@ var Message = (function () {
             '                            </div>\n' +
             '                        </div>\n' +
             '</li>';
-    };
-
-    /**
-     * Convert ip int
-     *
-     * @param ip
-     * @returns {*}
-     */
-    var ip2int = function ip2int(ip) {
-
-        return ip.split('.').reduce(function(ipInt, octet) {
-            return (ipInt<<8) + parseInt(octet, 10)
-        }, 0) >>> 0;
     };
 
     /**
@@ -73,9 +61,10 @@ var Message = (function () {
      */
     var getListRequest = function (url) {
 
-        var url = url + '/' + lastId;
+        var path = url + '/' + lastId;
 
-        jQuery.get(url)
+        // noinspection Annotator
+        jQuery.get(path) // jshint ignore:line
             .done(function (data) {
 
                 var row = data.slice(-1).pop();
@@ -102,16 +91,24 @@ var Message = (function () {
 
         var container = [];
 
+        /**
+         * @param m.message
+         * @param m.username
+         * @param m.publication
+         * @param m.ip
+         * @param m.location
+         */
         data.forEach(function (m) {
             container.push(
                 appendMessage(m.username, m.message, m.publication, m.ip, m.location)
-            )
+            );
         });
         return container.join('');
     };
 
+    // noinspection JSUnusedGlobalSymbols
     return {
         load: getListRequest,
         disableTime: disableTime
-    }
+    };
 })();
