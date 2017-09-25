@@ -4,6 +4,9 @@
 Простенький чат, для общения нескольких человек (не ограничено).
 Чтобы проверить работу, нужно естественно установить, и открыть несколько вкладок в браузере для общения
 
+![Alt text](/screnshoots/1.jpg?raw=true "Optional Title")
+![Alt text](/screnshoots/2.jpg?raw=true "Optional Title")
+
 ### Разработка 
 - [CONFIGURE] Docker compositor for Nginx 1.3 + PHP 5.6 + MySQL 5.6 @estimated 1h
 - [CONFIGURE] Yii2 & change docker mysql for self import  @estimated 30m
@@ -23,10 +26,11 @@
 ```
 > docker-compose up
 
-// при необходимости зайти в контейнер mysql и импортировать дамп
+// при необходимости зайти в контейнер mysql и инмпортировать дамп
 > (docker exec -i -t mysql /bin/bash)
 > (mysql -uroot -p chat < /docker-entrypoint-initdb.d/schema.sql)
 ```
+Если не получается запустить, поразным причинам то всегда можно поставить обычным способом (с Докером работаю не долго, поэтому пока на данный момент не совсем углублен в переносах контейнеров и возможно что то может пойти не так)
 
 ***2.*** Обычным способом 
 ```
